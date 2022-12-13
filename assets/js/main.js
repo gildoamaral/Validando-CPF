@@ -18,11 +18,11 @@ Se o dígito Y for maior que 9, consideramos 0.
 // 1. CRIANDO FUNÇÃO CONSTRUTORA
 //         ela irá limpar o cpf, tirando tudo que não for número.
 
-function ValidaCPF (cpfEnviado) {
+function ValidaCPF(cpfEnviado) {
     Object.defineProperty(this, 'cpfLimpo', {
-                        //criei cpfLimpo como propriedade
+        //criei cpfLimpo como propriedade
         enumerable: true,
-                        //tornei cpfLimpo enumerável
+        //tornei cpfLimpo enumerável
         get: function () {
             return cpfEnviado.replace(/\D+/g, '');
         }
@@ -34,27 +34,27 @@ function ValidaCPF (cpfEnviado) {
 //2. CRIANDO METODO DE VALIDAÇÃO NO PROTOTYPE
 //              retornará verdadeiro ou falso, validando o cpf segundo os meus padrões (poderia ser feito no settler?)
 
-ValidaCPF.prototype.valida = function() {
-    if(typeof this.cpfLimpo === 'undefined') return false;
-    if(this.cpfLimpo.length !== 11) return false;
-    if(this.isSequencia()) return false;
+ValidaCPF.prototype.valida = function () {
+    if (typeof this.cpfLimpo === 'undefined') return false;
+    if (this.cpfLimpo.length !== 11) return false;
+    if (this.isSequencia()) return false;
 
     const cpfParcial = this.cpfLimpo.slice(0, -2);
-//                              tirei os 2 digitos no cpf
+    //                              tirei os 2 digitos no cpf
     const digito1 = this.criaDigito(cpfParcial);
-//                      this -> ValidaCPF.prototype
+    //                      this -> ValidaCPF.prototype
     const digito2 = this.criaDigito(cpfParcial + digito1);
     const novoCpf = cpfParcial + digito1 + digito2;
-   
+
     return this.cpfLimpo === novoCpf;
-}; 
+};
 
 
 
 //3. CRIANDO OS DÍGITOS
 //               Aqui, de fato, será criado os digitos do CPF
 
-ValidaCPF.prototype.criaDigito = function(cpfParcial) {
+ValidaCPF.prototype.criaDigito = function (cpfParcial) {
     const cpfArray = Array.from(cpfParcial);
     let regressivo = cpfArray.length + 1;
 
@@ -64,7 +64,7 @@ ValidaCPF.prototype.criaDigito = function(cpfParcial) {
         return ac
     }, 0);
 
-    const digito = 11 - ( total % 11 );
+    const digito = 11 - (total % 11);
     return digito > 9 ? 0 : String(digito);
 }
 
@@ -79,7 +79,34 @@ ValidaCPF.prototype.isSequencia = function () {
 
 
 
-//5. INSTÂNCIAÇÃO
-const cpf = new ValidaCPF("");
+//5. INSTÂNCIAÇÃO / RESULTADO NA PAGE
+const cpfInput = document.querySelector("#cpf");
+const btn = document.querySelector("#btn");
+let cpf;
 
-cpf.valida() ? console.log('cpf válido!') : console.log('cpf inválido!');
+btn.addEventListener("click", function (e) {
+    e.preventDefault();
+
+    if (!cpfInput.value) return;
+    cpf = new ValidaCPF(cpfInput.value);
+
+    putResult(cpf);
+});
+
+
+function putResult (cpf) {
+    const p = document.createElement("p");
+    const resultado = document.querySelector("#resultado")
+    resultado.innerHTML = "";
+
+    cpf.valida() ? p.innerHTML = `${cpf.cpfLimpo}: cpf válido!` : p.innerHTML = `${cpf.cpfLimpo}: cpf inválido!`;
+
+    resultado.appendChild(p);
+}
+
+
+
+/* solução do console */
+
+// const cpf = new ValidaCPF(cpfEnviado);
+// cpf.valida() ? console.log('cpf válido!') : console.log('cpf inválido!');
