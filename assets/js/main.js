@@ -99,7 +99,13 @@ function putResult (cpf) {
     const resultado = document.querySelector("#resultado")
     resultado.innerHTML = "";
 
-    cpf.valida() ? p.innerHTML = `${cpf.cpfLimpo}: cpf válido!` : p.innerHTML = `${cpf.cpfLimpo}: cpf inválido!`;
+if (cpf.valida()) {
+    p.innerHTML = `${cpf.cpfLimpo}: cpf válido!`
+    p.style.color = "#28a745";
+} else {
+    p.innerHTML = `${cpf.cpfLimpo}: cpf inválido!`;
+    p.style.color = "#dc3545";
+}
 
     resultado.appendChild(p);
 }
